@@ -24,13 +24,16 @@ public class Voucher {
 	private String estado;
 	private String codigoVoucher;
 	private String codigoBarras;
-	private Integer puntoVenta;
+	private int puntoVenta;
 //	@DBRef
 //	private Empresa empresaEmision;
 	private String estadosPasados;
 	private String facturaAsociada;
 	private String Observacion;
 	private String idCopia;
+	@DBRef
+	private Excel excel;
+	private Boolean habilitado;
 	
 	
 	public Voucher() {
@@ -38,7 +41,7 @@ public class Voucher {
 	}
 	public Voucher(int tipoDoc, String dni, String nombreApellido, int valor, Date fechaDesde,
 			Date fechaHasta, String empresa, String estado, String codigoVoucher, String codigoBarras,
-			Integer puntoVenta) {
+			int puntoVenta) {
 
 		this.tipoDoc = tipoDoc;
 		this.dni = dni;
@@ -55,8 +58,8 @@ public class Voucher {
 
 	public Voucher(String _id, int tipoDoc, String dni, String nombreApellido, int valor, Date fechaDesde,
 			Date fechaHasta, String empresa, String estado, String codigoVoucher, String codigoBarras,
-			Integer puntoVenta, String estadosPasados, String facturaAsociada,
-			String observacion, String idCopia) {
+			int puntoVenta, String estadosPasados, String facturaAsociada,
+			String observacion, String idCopia, Excel excel, Boolean habilitado) {
 
 		this._id = _id;
 		this.tipoDoc = tipoDoc;
@@ -73,8 +76,10 @@ public class Voucher {
 //		this.empresaEmision = empresaEmision;
 		this.estadosPasados = estadosPasados;
 		this.facturaAsociada = facturaAsociada;
-		Observacion = observacion;
+		this.Observacion = observacion;
 		this.idCopia = idCopia;
+		this.excel = excel;
+		this.habilitado = habilitado;
 	}
 	
 	
@@ -144,10 +149,10 @@ public class Voucher {
 	public void setCodigoBarras(String codigoBarras) {
 		this.codigoBarras = codigoBarras;
 	}
-	public Integer getPuntoVenta() {
+	public int getPuntoVenta() {
 		return puntoVenta;
 	}
-	public void setPuntoVenta(Integer puntoVenta) {
+	public void setPuntoVenta(int puntoVenta) {
 		this.puntoVenta = puntoVenta;
 	}
 //	public Empresa getEmpresaEmision() {
@@ -181,6 +186,25 @@ public class Voucher {
 		this.idCopia = idCopia;
 	}
 	
+	public Excel getExcel() {
+		return excel;
+	}
+	public void setExcel(Excel excel) {
+		this.excel = excel;
+	}
+	
+	public Boolean getHabilitado() {
+		return habilitado;
+	}
+	public void setHabilitado(Boolean habilitado) {
+		this.habilitado = habilitado;
+	}
+	@Override
+	  public String toString() {
+	    return "Voucher [_id=" + _id + ", tipoDoc=" + tipoDoc + ", dni=" + dni + ", nombreApellido=" + nombreApellido + 
+	    		", fechaDesde" + fechaDesde + ", fechaHasta" + fechaHasta + ", empresa" + empresa + ", estado" + estado +
+	    		", codigoVoucher" + codigoVoucher + ", codigoBarras" + codigoBarras + ", puntoVenta" + puntoVenta +"]";
+	  }
 	
 	
 }
