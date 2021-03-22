@@ -3,6 +3,7 @@ package com.voucherExcel.controller;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -89,5 +90,10 @@ public class VoucherController {
 		return voucherService.getCodigoVoucher(codigo);
 	}
 	
+	// Obtencion de voucher a traves de codigo de Voucher
+	@RequestMapping(value = "/voucher/codigo/{id}", method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
+	public Optional<Voucher> getVouchersPorId(@PathVariable String id){
+		return voucherService.getVoucher(id);
+	}
 	
 }

@@ -1,5 +1,6 @@
 package com.voucherExcel.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -11,4 +12,6 @@ import com.voucherExcel.model.Excel;
 public interface ExcelRepository extends MongoRepository<Excel,String>{
 
 	Optional<Excel> findById(String id);
+	
+	List<Excel> findByEstado(String estado);
 }

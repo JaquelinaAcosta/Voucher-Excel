@@ -71,4 +71,12 @@ public class ExcelServiceImpl implements ExcelService{
 		return archivos;
 	}
 
+	@Override
+	public List<Excel> getExcelsEstado(String estado) {
+		List<Excel> archivos = excelRepository.findByEstado(estado);
+		return archivos;
+	}
+	
+
+
 }

@@ -10,4 +10,6 @@ public interface ExcelService {
 	Excel cancelarExcel(Excel excel) throws Exception;
 	Excel delete(String excelId);
 	List<Excel> getExcels(); 
+	
+	List<Excel> getExcelsEstado(String estado);
 }

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -81,4 +82,12 @@ public class ExcelController {
 		{
 			return excelService.getExcels();
 		}
+		
+		//listado de archivos Excel por estados
+		@RequestMapping(value = "/excel/listaEstados/{estado}", method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
+		public List<Excel> getExcelEstados(@PathVariable String estado)
+		{
+			return excelService.getExcelsEstado(estado);
+		}
+		
 }

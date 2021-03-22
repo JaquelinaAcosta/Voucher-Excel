@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -96,11 +97,11 @@ public class VoucherServiceImpl implements VoucherService {
     }
   }*/
 
-	@Override
-	public Voucher updateVoucher(Voucher voucher) throws Exception {
-		Voucher updateVoucher = voucherRepository.save(voucher);
-		return updateVoucher;
-	}
+//	@Override
+//	public Voucher updateVoucher(Voucher voucher) throws Exception {
+//		Voucher updateVoucher = voucherRepository.save(voucher);
+//		return updateVoucher;
+//	}
 
 	@Override
 	public Voucher deleteVoucher(String vpucherId) {
@@ -118,6 +119,13 @@ public class VoucherServiceImpl implements VoucherService {
 	@Override
 	public Voucher getCodigoVoucher(String cv) {
 		Voucher voucher = voucherRepository.findByCodigoVoucher(cv);
+		return voucher;
+	}
+
+
+	@Override
+	public Optional<Voucher> getVoucher(String id) {
+		Optional<Voucher> voucher = voucherRepository.findById(id);
 		return voucher;
 	}
 	
