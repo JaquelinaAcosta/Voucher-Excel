@@ -70,11 +70,11 @@ public class ExcelController {
 		}
 		
 		//modificacion de estado Excel "CANCELADO" y eliminacion del Voucher asocialdo (Eliminacion fisica para que no cree conflictos y ocupe memoria en BD)
-				@RequestMapping(value = "/excel/cancelar", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE,
-				consumes=MediaType.APPLICATION_JSON_VALUE)
-				public Excel cancelarExcel(@RequestBody @Valid Excel excel) throws Exception {
-					return excelService.cancelarExcel(excel);	
-				}
+		@RequestMapping(value = "/excel/cancelar", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE,
+		consumes=MediaType.APPLICATION_JSON_VALUE)
+		public Excel cancelarExcel(@RequestBody @Valid Excel excel) throws Exception {
+			return excelService.cancelarExcel(excel);	
+		}
 		
 		//listado de archivos Excel
 		@RequestMapping(value = "/excel/todos", method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
@@ -89,5 +89,7 @@ public class ExcelController {
 		{
 			return excelService.getExcelsEstado(estado);
 		}
+		
+		
 		
 }

@@ -17,4 +17,9 @@ public interface VoucherRepository extends MongoRepository<Voucher,String>{
 	Voucher findByCodigoVoucher(String codigoVoucher);
 	
 	List<Voucher> findByExcel(Excel excel);
+	Voucher findByEstado(String estado);
+
+	@Query(value = "{'estado' : ?0 , 'habilitado' : ?1}")
+	List<Voucher> findByEstadoAndHabilitado(String estado, Boolean habilitado);
+	
 }

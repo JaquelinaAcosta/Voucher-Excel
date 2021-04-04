@@ -30,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.voucherExcel.ResponseMessage;
 
 import com.voucherExcel.helpers.CSVHelper;
+import com.voucherExcel.model.Excel;
 import com.voucherExcel.model.Voucher;
 import com.voucherExcel.services.VoucherService;
 
@@ -96,4 +97,18 @@ public class VoucherController {
 		return voucherService.getVoucher(id);
 	}
 	
+	//CAMBIOS DE ESTADOS VOUCHER
+	//cambio de estado a eliminado
+	@RequestMapping(value = "/voucher/eliminar", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE,
+	consumes=MediaType.APPLICATION_JSON_VALUE)
+	public Voucher estadoEliminarVoucher(@RequestBody @Valid Voucher voucher) throws Exception {
+		return voucherService.estadoEliminarVoucher(voucher);	
+	}
+	
+	//cambio de estado de Vencido a Emitido
+	@RequestMapping(value = "/voucher/extenderVigencia", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE,
+	consumes=MediaType.APPLICATION_JSON_VALUE)
+	public Voucher estadoExtenderVigencia(@RequestBody @Valid Voucher voucher) throws Exception {
+		return voucherService.estadoExtenderVigencia(voucher);	
+	}
 }

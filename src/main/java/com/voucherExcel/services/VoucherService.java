@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.voucherExcel.model.Excel;
 import com.voucherExcel.model.Voucher;
 
 public interface VoucherService {
@@ -16,5 +17,13 @@ public interface VoucherService {
 	List<Voucher> getVouchers();
 	Voucher getCodigoVoucher(String cv);
 	Optional<Voucher> getVoucher(String id);
+
+	
+	//Estados de voucher
+	//cambio de estado eliminar
+	Voucher estadoEliminarVoucher(Voucher voucher) throws Exception;
+	
+	//Extender vigencia voucher vencido
+	Voucher estadoExtenderVigencia(Voucher voucher) throws Exception;
 
 }
