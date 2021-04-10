@@ -2,6 +2,7 @@ package com.voucherExcel.services.impl;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +32,7 @@ public class VoucherServiceImpl implements VoucherService {
 	private ExcelRepository excelRepository;
 	
 	private Boolean bandera;
+	private SimpleDateFormat f2 = new SimpleDateFormat("dd/MM/yyyy");
 	
 	private static final Log logger = LogFactory.getLog(VoucherServiceImpl.class);
 
@@ -76,8 +78,10 @@ public class VoucherServiceImpl implements VoucherService {
 		    	  excelRepository.delete(excelAdd);
 		      }  
 		      
+		     
 			  for(Voucher v : vouchers) {
 		    	  v.setExcel(excelAdd);
+		    	  v.setEstadosPasados("EMITIDO el dia "+ f2.format(excelAdd.getFecha())+" por el usuario: "+"agregar usuario");
 		      }
 			  
 		      voucherRepository.saveAll(vouchers);
@@ -128,9 +132,39 @@ public class VoucherServiceImpl implements VoucherService {
 		Optional<Voucher> voucher = voucherRepository.findById(id);
 		return voucher;
 	}
-	
-	
-	
+
+
+	//Elimiar voucher
+	@Override
+	public Voucher estadoEliminarVoucher(Voucher voucher) throws Exception {
+		Optional<Voucher> v = voucherRepository.findById(voucher.get_id());
+		if(v.get().getEstado().equals("E")) {
+			voucher.setEstadosPasados(v.get().getEstadosPasados()+'\n'+"ELIMINADO el dia "+ f2.format(new Date())+" por el usuario: "+"agregar usuario");
+			voucher.setEstado("EL");
+			//probar si es necesaria esta linea
+			voucher.setObservacion(voucher.getObservacion());
+			Voucher voucherAdd = voucherRepository.save(voucher);
+			return voucherAdd;
+		}else {
+			return v.get();
+		}
+		
+	}
+
+
+	//Extender vigencia de voucher vencido
+	@Override
+	public Voucher estadoExtenderVigencia(Voucher voucher) throws Exception {
+		Optional<Voucher> v = voucherRepository.findById(voucher.get_id());
+		if(v.get().getEstado().equals("V")) {
+			voucher.setEstadosPasados(v.get().getEstadosPasados()+'\n'+"EMITIDO con extención de VIGENCIA, el dia "+ f2.format(new Date())+" por el usuario: "+"agregar usuario");
+			voucher.setEstado("E");
+			Voucher voucherAdd = voucherRepository.save(voucher);
+			return voucherAdd;
+		}else {
+			return v.get();
+		}
+	}
 	
 
 }
