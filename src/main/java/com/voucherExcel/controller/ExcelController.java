@@ -67,14 +67,16 @@ public class ExcelController {
 	//modificacion de estado Excel "DISPONIBLE" y habilitacion de voucher para que sea utilizable
 		@RequestMapping(value = "/excel/disponible", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE,
 		consumes=MediaType.APPLICATION_JSON_VALUE)
-		public Excel updateExcel(@RequestBody @Valid Excel excel) throws Exception {
+		public Excel updateExcel(@RequestBody Excel excel) throws Exception {
+			excel.setEstado("DISPONIBLE");
 			return excelService.updateExcel(excel);	
 		}
 		
 		//modificacion de estado Excel "CANCELADO" y eliminacion del Voucher asocialdo (Eliminacion fisica para que no cree conflictos y ocupe memoria en BD)
 		@RequestMapping(value = "/excel/cancelar", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE,
 		consumes=MediaType.APPLICATION_JSON_VALUE)
-		public Excel cancelarExcel(@RequestBody @Valid Excel excel) throws Exception {
+		public Excel cancelarExcel(@RequestBody Excel excel) throws Exception {
+			excel.setEstado("CANCELADO");
 			return excelService.cancelarExcel(excel);	
 		}
 		
