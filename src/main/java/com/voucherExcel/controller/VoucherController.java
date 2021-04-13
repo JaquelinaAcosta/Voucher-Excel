@@ -1,9 +1,16 @@
 package com.voucherExcel.controller;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.validation.Valid;
 
@@ -13,10 +20,15 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,6 +45,7 @@ import com.voucherExcel.ResponseMessage;
 import com.voucherExcel.helpers.CSVHelper;
 import com.voucherExcel.model.Excel;
 import com.voucherExcel.model.Voucher;
+import com.voucherExcel.repository.FiltroVoucherRepository;
 import com.voucherExcel.services.VoucherService;
 
 @CrossOrigin("*")
@@ -43,6 +56,9 @@ public class VoucherController {
 	@Autowired
 	VoucherService voucherService;
 	
+	@Autowired
+	FiltroVoucherRepository filtroVoucherRepository;
+
 	private static final Log logger = LogFactory.getLog(VoucherController.class);
 	
 	//Para carga de archivo csv, todavia no funciona bien
@@ -113,4 +129,77 @@ public class VoucherController {
 	public Voucher estadoExtenderVigencia(@RequestBody @Valid Voucher voucher) throws Exception {
 		return voucherService.estadoExtenderVigencia(voucher);	
 	}
+	
+	
+	//Filtro de busqueda 
+	 @GetMapping("/voucher/filtro")
+	  public ResponseEntity<Map<String, Object>> getAllVocuhers(
+	        @RequestParam(required = false) String estado,
+	        @RequestParam(required = false) String dni,
+	        @RequestParam(required = false) String codigo,
+	        @RequestParam(required = false) String fechaD,
+	        @RequestParam(required = false) String fechaH,
+	        @RequestParam(defaultValue = "0") int page,
+	        @RequestParam(defaultValue = "3") int size
+	      ) {
+
+	    try {
+	      List<Voucher> vouchers = new ArrayList<Voucher>();
+	      Pageable paging = PageRequest.of(page, size);
+	      
+	      Page<Voucher> pageVous;
+	      
+	            
+	      if (estado == null && dni == null && codigo == null && fechaD== null && fechaH== null)
+	      	  pageVous = filtroVoucherRepository.findAll(paging);
+	      else if (codigo != null) {
+	    	  //como el codigo de voucher es unico y no se repite, al aplicar el filtro con codigo solo ingresa en este if
+	    	  pageVous = filtroVoucherRepository.findByCodigoVoucher(codigo, paging);
+	      }
+	      else if (fechaD != null && fechaH != null && estado != null && dni != null) { 
+	    	  LocalDate desde = LocalDate.parse(fechaD);
+			  LocalDate hasta = LocalDate.parse(fechaH);
+	    	  pageVous = filtroVoucherRepository.findByDniAndEstadoAndFechaHasta(dni, estado, desde, hasta, paging);
+	      }
+	      else if (estado != null && dni != null && fechaD == null && fechaH == null) {
+	    	  pageVous = filtroVoucherRepository.findByEstadoAndDni(estado, dni, paging);
+	      }
+	      else if (fechaD != null && fechaH != null && estado != null && dni == null) { 
+	    	  LocalDate desde = LocalDate.parse(fechaD);
+			  LocalDate hasta = LocalDate.parse(fechaH);
+	    	  pageVous = filtroVoucherRepository.findByEstadoAndFechaHasta(estado, desde, hasta, paging);
+	      }
+	      else if (fechaD != null && fechaH != null && estado == null && dni != null) {
+	    	  LocalDate desde = LocalDate.parse(fechaD);
+			  LocalDate hasta = LocalDate.parse(fechaH);
+	    	  pageVous = filtroVoucherRepository.findByDniAndFechaHasta(dni, desde, hasta, paging);
+	      }
+	      else if (fechaD != null && fechaH != null && estado == null && dni == null) { 
+	    	  LocalDate desde = LocalDate.parse(fechaD);
+			  LocalDate hasta = LocalDate.parse(fechaH);
+	    	  pageVous = filtroVoucherRepository.findByFechaHasta(desde, hasta, paging);
+	      }
+	      else if (estado != null && dni == null && fechaD == null && fechaH == null) {
+	    	  pageVous = filtroVoucherRepository.findByEstado(estado, paging);
+	      }
+	      else {
+	    	  pageVous = filtroVoucherRepository.findByDni(dni, paging);
+	      }
+   
+	      vouchers = pageVous.getContent();
+	      System.out.println(vouchers);
+
+	      Map<String, Object> response = new HashMap<>();
+	      response.put("estados", vouchers);
+	      response.put("currentPage", pageVous.getNumber());
+	      response.put("totalItems", pageVous.getTotalElements());
+	      response.put("totalPages", pageVous.getTotalPages());
+
+	      return new ResponseEntity<>(response, HttpStatus.OK);
+	    } catch (Exception e) {
+	        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+	      }
+	    }
+	 
+
 }
