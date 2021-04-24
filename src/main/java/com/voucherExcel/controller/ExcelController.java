@@ -28,7 +28,7 @@ import com.voucherExcel.services.VoucherService;
 
 @CrossOrigin("*")
 @RestController
-@RequestMapping("/apiExcel")
+@RequestMapping("/apiVoucher")
 public class ExcelController {
 
 	@Autowired
