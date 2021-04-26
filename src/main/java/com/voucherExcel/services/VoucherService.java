@@ -3,6 +3,8 @@ package com.voucherExcel.services;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.web.multipart.MultipartFile;
 
 import com.voucherExcel.model.Excel;
@@ -20,10 +22,19 @@ public interface VoucherService {
 
 	
 	//Estados de voucher
-	//cambio de estado eliminar
+	//cambio de estado ELIMINAR
 	Voucher estadoEliminarVoucher(Voucher voucher) throws Exception;
 	
-	//Extender vigencia voucher vencido
+	//Extender vigencia voucher VENCIDO
 	Voucher estadoExtenderVigencia(Voucher voucher) throws Exception;
+	
+	//Cambio de estado NO DISPONIBLE
+	Voucher estadoNoDisponible(Voucher voucher) throws Exception;
+	
+	//Hacer DUPLICADO de un voucher No-Disponible
+	Voucher duplicadoVoucher(Voucher voucher) throws Exception;
+	
+	//Asociar voucher duplicado
+	Voucher voucherDupliAsociado(Voucher voucher, Voucher duplicado);
 
 }

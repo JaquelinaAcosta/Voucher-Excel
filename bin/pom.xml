@@ -77,19 +77,13 @@
             <version>20090211</version>
  		</dependency>
  		
-<!-- 		<dependency> -->
-<!--   			<groupId>com.voucherMiddleware</groupId> -->
-<!-- 			<artifactId>voucher</artifactId> -->
-<!-- 			<version>0.0.1-SNAPSHOT</version> -->
-<!--         </dependency>  -->
-        
-        
+		
 <!-- 		<dependency> -->
 <!--   			<groupId>com.voucher</groupId> -->
 <!-- 			<artifactId>voucher-usuario</artifactId> -->
 <!-- 			<version>0.0.1-SNAPSHOT</version> -->
 <!--         </dependency>    -->
-
+        
 
 		
 	</dependencies>
