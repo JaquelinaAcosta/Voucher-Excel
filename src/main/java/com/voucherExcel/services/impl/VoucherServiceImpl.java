@@ -81,7 +81,7 @@ public class VoucherServiceImpl implements VoucherService {
 		     
 			  for(Voucher v : vouchers) {
 		    	  v.setExcel(excelAdd);
-		    	  v.setEstadosPasados("EMITIDO el dia "+ f2.format(excelAdd.getFecha())+" por el usuario: "+"agregar usuario");
+		    	  v.setEstadosPasados("EMITIDO el día "+ f2.format(excelAdd.getFecha())+" por el usuario: "+"agregar usuario");
 		      }
 			  
 		      voucherRepository.saveAll(vouchers);
@@ -139,7 +139,7 @@ public class VoucherServiceImpl implements VoucherService {
 	public Voucher estadoEliminarVoucher(Voucher voucher) throws Exception {
 		Optional<Voucher> v = voucherRepository.findById(voucher.get_id());
 		if(v.get().getEstado().equals("E")) {
-			voucher.setEstadosPasados(v.get().getEstadosPasados()+'\n'+"ELIMINADO el dia "+ f2.format(new Date())+" por el usuario: "+"agregar usuario");
+			voucher.setEstadosPasados(v.get().getEstadosPasados()+'\n'+"ELIMINADO el día "+ f2.format(new Date())+" por el usuario: "+"agregar usuario");
 			voucher.setEstado("EL");
 			//probar si es necesaria esta linea
 			voucher.setObservacion(voucher.getObservacion());
@@ -157,13 +157,69 @@ public class VoucherServiceImpl implements VoucherService {
 	public Voucher estadoExtenderVigencia(Voucher voucher) throws Exception {
 		Optional<Voucher> v = voucherRepository.findById(voucher.get_id());
 		if(v.get().getEstado().equals("V")) {
-			voucher.setEstadosPasados(v.get().getEstadosPasados()+'\n'+"EMITIDO con extención de VIGENCIA, el dia "+ f2.format(new Date())+" por el usuario: "+"agregar usuario");
+			voucher.setEstadosPasados(v.get().getEstadosPasados()+'\n'+"EMITIDO con extención de VIGENCIA, el día "+ f2.format(new Date())+" por el usuario: "+"agregar usuario");
 			voucher.setEstado("E");
 			Voucher voucherAdd = voucherRepository.save(voucher);
 			return voucherAdd;
 		}else {
 			return v.get();
 		}
+	}
+
+
+	@Override
+	public Voucher estadoNoDisponible(Voucher voucher) throws Exception {
+		Optional<Voucher> v = voucherRepository.findById(voucher.get_id());
+		if(v.get().getEstado().equals("U")) {
+				voucher.setEstadosPasados(v.get().getEstadosPasados()+'\n'+"NO DISPONIBLE el día "+ f2.format(new Date())+" por el usuario: "+"agregar usuario");
+				voucher.setEstado("ND");
+				Voucher voucherAdd = voucherRepository.save(voucher);
+				return voucherAdd;
+		}else {
+			System.out.print("El voucher no está en estado UTILIZADO");
+			return v.get();
+		}
+	}
+
+
+	@Override
+	public Voucher duplicadoVoucher(Voucher voucher) throws Exception {
+		Optional<Voucher> v = voucherRepository.findById(voucher.get_id());
+		logger.info("encontro el voucher para duplicar");
+		logger.info(v);
+		if (v.get().getIdCopia() == null && v.get().getEstado().equals("ND")) {
+			logger.info("entro al if copia id null y estado ND");
+			Voucher voucherD = new Voucher();
+			voucherD.setCodigoVoucher(v.get().getCodigoVoucher()+"-D");
+			voucherD.setDni(v.get().getDni());
+			voucherD.setEmpresa(v.get().getEmpresa());
+			voucherD.setFechaDesde(v.get().getFechaDesde());
+			voucherD.setFechaHasta(v.get().getFechaHasta());
+			voucherD.setHabilitado(true);
+			voucherD.setNombreApellido(v.get().getNombreApellido());
+			voucherD.setEstado("E");
+			voucherD.setTipoDoc(v.get().getTipoDoc());
+			voucherD.setValor(v.get().getValor());
+			voucherD.setPuntoVenta(v.get().getPuntoVenta());
+			voucherD.setCodigoBarras(v.get().getCodigoBarras());
+			voucherD.setEstadosPasados("DUPLICADO del voucher "+v.get().getCodigoVoucher()+", el día "+f2.format(new Date())+" por el usuario: "+"agregar usuario");
+			//TODO: hacer set de empresa de emision
+			
+			return voucherRepository.save(voucherD);
+			
+		}
+		return null;
+	}
+
+
+	@Override
+	public Voucher voucherDupliAsociado(Voucher voucher, Voucher duplicado) {
+		logger.info("guarda el estado y id del duplicado en el original");
+		Optional<Voucher> v = voucherRepository.findById(duplicado.get_id());
+		voucher.setIdCopia(v.get().get_id());
+		voucher.setEstadosPasados(v.get().getEstadosPasados()+'\n'+"DUPLICADO el día "+f2.format(new Date())+" por el usuario: "+"agregar usuario");
+		return voucherRepository.save(voucher);
+		
 	}
 	
 
