@@ -119,36 +119,36 @@ public class ExcelController {
 		      ) {
 
 		    try {
-		      List<Excel> vouchers = new ArrayList<Excel>();
+		      List<Excel> excels = new ArrayList<Excel>();
 		      Pageable paging = PageRequest.of(page, size);
 		      
-		      Page<Excel> pageVous;
+		      Page<Excel> pageE;
 		      
 		            
 		      if (estado == null && fechaD== null && fechaH== null)
-		      	  pageVous = filtroExcelRepository.findAll(paging);
+		      	  pageE = filtroExcelRepository.findAll(paging);
 		      else if (fechaD != null && fechaH != null && estado != null) { 
 		    	  LocalDate desde = LocalDate.parse(fechaD);
 				  LocalDate hasta = LocalDate.parse(fechaH);
-		    	  pageVous = filtroExcelRepository.findByEstadoAndFecha(estado, desde, hasta, paging);
+		    	  pageE = filtroExcelRepository.findByEstadoAndFecha(estado, desde, hasta, paging);
 		      }
 		      else if (estado == null && fechaD != null && fechaH != null) {
 		    	  LocalDate desde = LocalDate.parse(fechaD);
 				  LocalDate hasta = LocalDate.parse(fechaH);
-		    	  pageVous = filtroExcelRepository.findByFecha(desde, hasta, paging);
+		    	  pageE = filtroExcelRepository.findByFecha(desde, hasta, paging);
 		      }  
 		      else {
-		    	  pageVous = filtroExcelRepository.findByEstado(estado, paging);
+		    	  pageE = filtroExcelRepository.findByEstado(estado, paging);
 		      }
 	   
-		      vouchers = pageVous.getContent();
-		      System.out.println(vouchers);
+		      excels = pageE.getContent();
+		      System.out.println(excels);
 
 		      Map<String, Object> response = new HashMap<>();
-		      response.put("estados", vouchers);
-		      response.put("currentPage", pageVous.getNumber());
-		      response.put("totalItems", pageVous.getTotalElements());
-		      response.put("totalPages", pageVous.getTotalPages());
+		      response.put("estados", excels);
+		      response.put("currentPage", pageE.getNumber());
+		      response.put("totalItems", pageE.getTotalElements());
+		      response.put("totalPages", pageE.getTotalPages());
 
 		      return new ResponseEntity<>(response, HttpStatus.OK);
 		    } catch (Exception e) {
