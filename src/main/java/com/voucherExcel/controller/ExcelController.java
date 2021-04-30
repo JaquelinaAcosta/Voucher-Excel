@@ -31,6 +31,7 @@ import com.voucherExcel.ResponseMessage;
 import com.voucherExcel.helpers.CSVHelper;
 import com.voucherExcel.model.Excel;
 import com.voucherExcel.model.Voucher;
+import com.voucherExcel.model.res.VoucherProceso;
 import com.voucherExcel.repository.FiltroExcelRepository;
 import com.voucherExcel.services.ExcelService;
 import com.voucherExcel.services.VoucherService;
@@ -62,9 +63,13 @@ public class ExcelController {
 			
 			 if (CSVHelper.hasExcelFormat(file)) {
 			      try {
-			    	  voucherService.addVoucherExcel(file);    	  
-			    	  message = "Uploaded the file successfully: " + file.getOriginalFilename();
-			    	  return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
+			    	  VoucherProceso pv = voucherService.addVoucherExcel(file);    	
+			    	  if(pv.getVouchers().isEmpty()) {
+			    		  return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(pv.getError()));
+			    	  }else {
+				    	  message = "Uploaded the file successfully: " + file.getOriginalFilename();
+				    	  return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
+			    	  }
 			      } catch (Exception e) {
 			    	  message = "Could not upload the file: " + file.getOriginalFilename() + "!";
 			          return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));

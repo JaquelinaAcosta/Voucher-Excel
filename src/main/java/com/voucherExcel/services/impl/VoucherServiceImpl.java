@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.voucherExcel.helpers.CSVHelper;
 import com.voucherExcel.model.Excel;
 import com.voucherExcel.model.Voucher;
+import com.voucherExcel.model.res.VoucherProceso;
 import com.voucherExcel.repository.ExcelRepository;
 import com.voucherExcel.repository.VoucherRepository;
 import com.voucherExcel.services.VoucherService;
@@ -49,17 +50,19 @@ public class VoucherServiceImpl implements VoucherService {
 
 	 
 	@Override
-	public List<Voucher> addVoucherExcel(MultipartFile file) {
+	public VoucherProceso addVoucherExcel(MultipartFile file) {
 		bandera = false;
 		int registros = 0;
 		try {
-			List<Voucher> vouchers = CSVHelper.excelToVouchers(file.getInputStream());
+			VoucherProceso voucherProceso = CSVHelper.excelToVouchers(file.getInputStream());
+			List<Voucher> vouchers = voucherProceso.getVouchers();
 			//Controla si el codigo de voucher esta repetido en Base de Datos
 		      for(Voucher v : vouchers) {
 		    	  Voucher vAux = voucherRepository.findByCodigoVoucher(v.getCodigoVoucher());
 		    	  registros++;
 		    	  if(vAux!=null) {
 		    		  bandera = true;
+		    		  voucherProceso.setError(voucherProceso.getError() +'\n'+"El codigo de voucher: " + vAux.getCodigoVoucher() + " esta repetido dentro del sistema");
 		    	  }
 		      }
 		    //Creacion excel
@@ -76,8 +79,11 @@ public class VoucherServiceImpl implements VoucherService {
 		    	  System.out.print("El voucher se encuentra en la BD, revisar Archivo a cargar");
 		    	  vouchers.clear();
 		    	  excelRepository.delete(excelAdd);
-		      }  
+		      }  	  
 		      
+		      if (!voucherProceso.getError().isEmpty()) {
+		    	  excelRepository.delete(excelAdd);
+		      }
 		     
 			  for(Voucher v : vouchers) {
 		    	  v.setExcel(excelAdd);
@@ -86,7 +92,8 @@ public class VoucherServiceImpl implements VoucherService {
 			  
 		      voucherRepository.saveAll(vouchers);
 		      List<Voucher> addVouchers = vouchers;
-		      return addVouchers;
+		      voucherProceso.setVouchers(addVouchers);
+		      return voucherProceso;
 		} catch (IOException e) {
 		      throw new RuntimeException("fail to store excel data: " + e.getMessage());
 		}
