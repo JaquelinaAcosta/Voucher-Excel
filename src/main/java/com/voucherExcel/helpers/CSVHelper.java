@@ -27,6 +27,7 @@ import org.apache.commons.logging.LogFactory;
 
 import com.voucherExcel.controller.VoucherController;
 import com.voucherExcel.model.Voucher;
+import com.voucherExcel.model.res.VoucherProceso;
 import com.voucherExcel.services.VoucherService;
 
 
@@ -60,25 +61,17 @@ public class CSVHelper {
 	    try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
 	        CSVParser csvParser = new CSVParser(fileReader,
 	            CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim());) {
-	    	logger.info("Entro al TRY CSVHELPER");
-	    	
-	    	logger.info("IS");
-	    	logger.info(is);
 
 	      List<Voucher> vouchers = new ArrayList<Voucher>();
 
 	      Iterable<CSVRecord> csvRecords = csvParser.getRecords();
-	      logger.info("CSV RECORDS");
-	      logger.info(csvRecords);
 	     
 	      DateFormat fechaDesde = new SimpleDateFormat("dd-MM-yyyy");
 	      DateFormat fechaHasta = new SimpleDateFormat("dd-MM-yyyy");
 
 	      for (CSVRecord csvRecord : csvRecords) {
-	    	  logger.info("CSV FOR");
 	    	  logger.info(csvRecords);
 	    	  logger.info(csvRecord);
-	    	  logger.info("DNIII");
 
 	    	  Voucher voucher = new Voucher(
 //	              Integer.parseInt(csvRecord.get("tipoDoc")),
@@ -95,8 +88,6 @@ public class CSVHelper {
 	            );
 
 	        vouchers.add(voucher);
-	        logger.info("voucher");
-	        logger.info(voucher);
 	        
 	      }
 	      
@@ -132,7 +123,7 @@ public class CSVHelper {
 	  return true;
   }
 
-  public static List<Voucher> excelToVouchers(InputStream is) {
+  public static VoucherProceso excelToVouchers(InputStream is) throws IOException {
 	  try {
 		  Workbook workbook = new XSSFWorkbook(is);
 
@@ -140,10 +131,13 @@ public class CSVHelper {
 		  //      Sheet sheet = workbook.createSheet();
 
 		  Iterator<Row> rows = sheet.iterator();
-
+		  
+		  VoucherProceso voucherProceso = new VoucherProceso();
 		  List<Voucher> vouchers = new ArrayList<Voucher>();
 		  List<String> codigoVoucher = new ArrayList<String>();
-
+		  String errores = new String();
+		  errores = "";
+		  
 		  int rowNumber = 0;
 
 		  while (rows.hasNext()) {
@@ -163,7 +157,6 @@ public class CSVHelper {
 			  int cellIdx = 0;
 			  while (cellsInRow.hasNext()) {
 				  Cell currentCell = cellsInRow.next();
-
 				  switch (cellIdx) {
 
 				  case 0:
@@ -202,10 +195,10 @@ public class CSVHelper {
 					  try {
 						  if(f2.parse(hoy1).before(f2.parse(fechaH))) {
 							  voucher.setFechaHasta(f2.parse(fechaH)); 
-							  logger.info("Guarda fecha");
 						  } else {
 							  errorExcel = true;
-							  logger.info("error excel fecha");
+							  voucher.setFechaHasta(f2.parse(fechaH)); 
+							  errores = errores+'\n'+"Revisar la fila: "+ currentCell.getRowIndex()+ ". La fecha de vencimiento: "+ fechaH+" es menor a la fecha del dia";
 						  }
 					//	  voucher.setFechaHasta(f2.parse(fecha2));         	  
 					  } catch (ParseException ex) {
@@ -221,7 +214,8 @@ public class CSVHelper {
 						  voucher.setEstado(currentCell.getStringCellValue());
 					  }else {
 						  errorExcel = true;
-						  logger.info("error excel");
+						  voucher.setEstado(currentCell.getStringCellValue());
+						  errores = errores +'\n'+"Revisar la fila: "+ currentCell.getRowIndex()+ ". El estado de voucher tiene que ser E.";
 					  }         		
 					  break;
 
@@ -232,21 +226,19 @@ public class CSVHelper {
 					  for(Voucher v : vouchers) {
 						  if(v.getCodigoVoucher().equals(codigo)) {
 							  errorExcelCV = true;
-							  logger.info("CV repetido");
 						  }
 					  }
-
 					  if (!errorExcelCV) {
 						  voucher.setCodigoVoucher(codigo);
-						  logger.info("Inserta CV");
 					  }else {
-						  errorExcel=true;
+						  errorExcel = true;
+						  errorExcelCV = false;
+						  voucher.setCodigoVoucher(codigo);
+						  errores = errores +'\n'+"Revisar la fila: "+ currentCell.getRowIndex()+ ". El codigo de voucher: " + codigo + " esta repetido dentro del archivo";
 					  }
-
 					  break;
 					  
-				  case 9:
-					  
+				  case 9:				  
 					  voucher.setCodigoBarras(String.valueOf((int) currentCell.getNumericCellValue()));
 					  break;
 
@@ -259,23 +251,28 @@ public class CSVHelper {
 				  }
 
 				  cellIdx++;
-				  logger.info(cellIdx);
 			  }
-
 			  vouchers.add(voucher);
-
 		  }
-		  if(errorExcel) {
+		  
+		  if(errorExcel) {			  
+			  System.out.println(errores);
 			  vouchers.clear();
-			  System.out.print("Error en la carga de archivo, Revise su archivo");
 		  }
+		  
 		  workbook.close();
+		  
+		  voucherProceso.setError(errores);
+		  voucherProceso.setVouchers(vouchers);
 
-		  return vouchers;
+		  System.out.println(voucherProceso.getError());
+		  System.out.println(voucherProceso.getVouchers());
+
+		  return voucherProceso;
 	  } catch (IOException e) {
-		  throw new RuntimeException("fail to parse Excel file: " + e.getMessage());
+		  throw new RuntimeException("No se puede analizar el archivo de Excel: " + e.getMessage());
 	  }
-  } 
+  }
 
   
 }
