@@ -131,6 +131,24 @@ public class VoucherController {
 	}
 	
 	
+	//cambio de estado de Utilizado a NoDisponible (ver campo observacion obligatorio en el FRONT)
+	@RequestMapping(value = "/voucher/no-disponible", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE,
+	consumes=MediaType.APPLICATION_JSON_VALUE)
+	public Voucher estadoNoDisponible(@RequestBody @Valid Voucher voucher) throws Exception {
+		return voucherService.estadoNoDisponible(voucher);	
+	}
+		
+		
+	//cambio de estado de Utilizado a NoDisponible (ver campo observacion obligatorio en el FRONT y validar la empresa de emision)
+	@RequestMapping(value = "/voucher/duplicado", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE,
+	consumes=MediaType.APPLICATION_JSON_VALUE)
+	public Voucher duplicadoVoucher(@RequestBody @Valid Voucher voucher) throws Exception {
+		Voucher duplicado = voucherService.duplicadoVoucher(voucher);	
+		logger.info("el duplicado es");
+		logger.info(duplicado);
+		return voucherService.voucherDupliAsociado(voucher, duplicado);
+	}
+	
 	//Filtro de busqueda 
 	 @GetMapping("/voucher/filtro")
 	  public ResponseEntity<Map<String, Object>> getAllVocuhers(
