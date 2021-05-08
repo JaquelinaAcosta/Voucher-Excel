@@ -15,7 +15,7 @@ public class Excel {
 	private String estado;
 	private int cantidadRegistros;
 //	@DBRef
-//	private Usuario responsable; 
+	private String responsable; 
 	
 	public Excel() {
 	
@@ -60,6 +60,14 @@ public class Excel {
 	}
 	public void setCantidadRegistros(int cantidadRegistros) {
 		this.cantidadRegistros = cantidadRegistros;
+	}
+
+	public String getResponsable() {
+		return responsable;
+	}
+
+	public void setResponsable(String responsable) {
+		this.responsable = responsable;
 	}
 	
 	

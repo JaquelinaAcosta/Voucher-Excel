@@ -71,6 +71,11 @@ public class VoucherServiceImpl implements VoucherService {
 			  excel.setFecha(new Date());
 			  excel.setNombreExcel("Voucher " + (new Date()).toString());
 			  excel.setCantidadRegistros(registros);
+			  
+			  //////  OBTENER USUARIO LOGUEADO  //////
+			  excel.setResponsable("no_usuario");
+			  
+			  
 			  logger.info(excel);
 			  Excel excelAdd = excelRepository.save(excel);
 			  
