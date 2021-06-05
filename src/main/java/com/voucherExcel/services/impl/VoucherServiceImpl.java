@@ -88,6 +88,7 @@ public class VoucherServiceImpl implements VoucherService {
 			  for(Voucher v : vouchers) {
 		    	  v.setExcel(excelAdd);
 		    	  v.setEstadosPasados("EMITIDO el día "+ f2.format(excelAdd.getFecha())+" por el usuario: "+"agregar usuario");
+		    	  v.setHabilitado(false);
 		      }
 			  
 		      voucherRepository.saveAll(vouchers);
@@ -192,10 +193,7 @@ public class VoucherServiceImpl implements VoucherService {
 	@Override
 	public Voucher duplicadoVoucher(Voucher voucher) throws Exception {
 		Optional<Voucher> v = voucherRepository.findById(voucher.get_id());
-		logger.info("encontro el voucher para duplicar");
-		logger.info(v);
-		if (v.get().getIdCopia() == null && v.get().getEstado().equals("ND")) {
-			logger.info("entro al if copia id null y estado ND");
+		if (v.get().getIdCopia() == null && v.get().getEstado().equals("ND")) {;
 			Voucher voucherD = new Voucher();
 			voucherD.setCodigoVoucher(v.get().getCodigoVoucher()+"-D");
 			voucherD.setDni(v.get().getDni());
