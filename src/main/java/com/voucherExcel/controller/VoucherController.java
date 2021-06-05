@@ -139,13 +139,11 @@ public class VoucherController {
 	}
 		
 		
-	//cambio de estado de Utilizado a NoDisponible (ver campo observacion obligatorio en el FRONT y validar la empresa de emision)
+	//cambio de estado de Utilizado a Duplicado (ver campo observacion obligatorio en el FRONT y validar la empresa de emision)
 	@RequestMapping(value = "/voucher/duplicado", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE,
 	consumes=MediaType.APPLICATION_JSON_VALUE)
 	public Voucher duplicadoVoucher(@RequestBody @Valid Voucher voucher) throws Exception {
 		Voucher duplicado = voucherService.duplicadoVoucher(voucher);	
-		logger.info("el duplicado es");
-		logger.info(duplicado);
 		return voucherService.voucherDupliAsociado(voucher, duplicado);
 	}
 	
