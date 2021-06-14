@@ -219,7 +219,6 @@ public class VoucherServiceImpl implements VoucherService {
 
 	@Override
 	public Voucher voucherDupliAsociado(Voucher voucher, Voucher duplicado) {
-		logger.info("guarda el estado y id del duplicado en el original");
 		Optional<Voucher> v = voucherRepository.findById(duplicado.get_id());
 		voucher.setIdCopia(v.get().get_id());
 		voucher.setEstadosPasados(v.get().getEstadosPasados()+'\n'+"DUPLICADO el día "+f2.format(new Date())+" por el usuario: "+"agregar usuario");
