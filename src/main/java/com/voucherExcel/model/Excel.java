@@ -25,6 +25,10 @@ public class Excel {
 	public enum Empresa{
 		EMSA, CARSA
 	}
+
+  
+	private String responsable; 
+
 	
 	public Excel() {
 	
@@ -70,6 +74,14 @@ public class Excel {
 	}
 	public void setCantidadRegistros(int cantidadRegistros) {
 		this.cantidadRegistros = cantidadRegistros;
+	}
+
+	public String getResponsable() {
+		return responsable;
+	}
+
+	public void setResponsable(String responsable) {
+		this.responsable = responsable;
 	}
 	
 	public Empresa getEmpresaEmision() {
