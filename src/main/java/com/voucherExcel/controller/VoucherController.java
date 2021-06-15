@@ -42,7 +42,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.voucherExcel.ResponseMessage;
 
-import com.voucherExcel.helpers.CSVHelper;
+import com.voucherExcel.helpers.ExcelHelper;
 import com.voucherExcel.model.Excel;
 import com.voucherExcel.model.Voucher;
 import com.voucherExcel.repository.FiltroVoucherRepository;
@@ -62,29 +62,29 @@ public class VoucherController {
 	private static final Log logger = LogFactory.getLog(VoucherController.class);
 	
 	//Para carga de archivo csv, todavia no funciona bien
-	@RequestMapping(value = "/csv/voucher",headers = "content-type=multipart/*", 
-			method = RequestMethod.POST, 
-			produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	  public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("file") MultipartFile file) {
-		logger.info("ALTA Controller");
-	    String message = "";
-
-	    if (CSVHelper.hasCSVFormat(file)) {
-	      try {
-	    	  logger.info("TRY Controller");
-	    	  voucherService.addVoucher(file);
-
-	        message = "Uploaded the file successfully: " + file.getOriginalFilename();
-	        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
-	      } catch (Exception e) {
-	        message = "Could not upload the file: " + file.getOriginalFilename() + "!";
-	        return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
-	      }
-	    }
-
-	    message = "Please upload a csv file!";
-	    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(message));
-	  }
+//	@RequestMapping(value = "/csv/voucher",headers = "content-type=multipart/*", 
+//			method = RequestMethod.POST, 
+//			produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//	  public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("file") MultipartFile file) {
+//		logger.info("ALTA Controller");
+//	    String message = "";
+//
+//	    if (CSVHelper.hasCSVFormat(file)) {
+//	      try {
+//	    	  logger.info("TRY Controller");
+//	    	  voucherService.addVoucher(file);
+//
+//	        message = "Uploaded the file successfully: " + file.getOriginalFilename();
+//	        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
+//	      } catch (Exception e) {
+//	        message = "Could not upload the file: " + file.getOriginalFilename() + "!";
+//	        return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
+//	      }
+//	    }
+//
+//	    message = "Please upload a csv file!";
+//	    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(message));
+//	  }
 	
 	
 	
@@ -203,8 +203,7 @@ public class VoucherController {
 	      }
    
 	      vouchers = pageVous.getContent();
-	      System.out.println(vouchers);
-
+	      
 	      Map<String, Object> response = new HashMap<>();
 	      response.put("estados", vouchers);
 	      response.put("currentPage", pageVous.getNumber());

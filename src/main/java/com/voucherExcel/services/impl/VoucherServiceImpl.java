@@ -14,7 +14,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.voucherExcel.helpers.CSVHelper;
+import com.voucherExcel.helpers.ExcelHelper;
 import com.voucherExcel.model.Excel;
 import com.voucherExcel.model.Voucher;
 import com.voucherExcel.model.res.VoucherProceso;
@@ -40,7 +40,7 @@ public class VoucherServiceImpl implements VoucherService {
 	  public void addVoucher(MultipartFile file) {
 		bandera = false;
 	    try {
-	      List<Voucher> vouchers = CSVHelper.csvToVouchers(file.getInputStream());
+	      List<Voucher> vouchers = ExcelHelper.csvToVouchers(file.getInputStream());
 
 	      voucherRepository.saveAll(vouchers);
 	    } catch (IOException e) {
@@ -54,7 +54,7 @@ public class VoucherServiceImpl implements VoucherService {
 		bandera = false;
 		int registros = 0;
 		try {
-			VoucherProceso voucherProceso = CSVHelper.excelToVouchers(file.getInputStream());
+			VoucherProceso voucherProceso = ExcelHelper.excelToVouchers(file.getInputStream());
 			List<Voucher> vouchers = voucherProceso.getVouchers();
 			//Controla si el codigo de voucher esta repetido en Base de Datos
 		      for(Voucher v : vouchers) {
@@ -224,7 +224,6 @@ public class VoucherServiceImpl implements VoucherService {
 
 	@Override
 	public Voucher voucherDupliAsociado(Voucher voucher, Voucher duplicado) {
-		logger.info("guarda el estado y id del duplicado en el original");
 		Optional<Voucher> v = voucherRepository.findById(duplicado.get_id());
 		voucher.setIdCopia(v.get().get_id());
 		voucher.setEstadosPasados(v.get().getEstadosPasados()+'\n'+"DUPLICADO el día "+f2.format(new Date())+" por el usuario: "+"agregar usuario");

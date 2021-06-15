@@ -25,8 +25,8 @@ public class Voucher {
 	private String codigoVoucher;
 	private String codigoBarras;
 	private int puntoVenta;
-//	@DBRef
-//	private Empresa empresaEmision;
+	//@DBRef
+	private Empresa empresaEmision;
 	private String estadosPasados;
 	private String facturaAsociada;
 	private String Observacion;
@@ -35,7 +35,9 @@ public class Voucher {
 	private Excel excel;
 	private Boolean habilitado;
 	
-	
+	public enum Empresa{
+		EMSA, CARSA
+	}
 	public Voucher() {
 		super();
 	}
@@ -59,7 +61,7 @@ public class Voucher {
 	public Voucher(String _id, int tipoDoc, String dni, String nombreApellido, int valor, Date fechaDesde,
 			Date fechaHasta, String empresa, String estado, String codigoVoucher, String codigoBarras,
 			int puntoVenta, String estadosPasados, String facturaAsociada,
-			String observacion, String idCopia, Excel excel, Boolean habilitado) {
+			String observacion, String idCopia, Excel excel, Boolean habilitado, Empresa EmpresaEmision) {
 
 		this._id = _id;
 		this.tipoDoc = tipoDoc;
@@ -80,6 +82,7 @@ public class Voucher {
 		this.idCopia = idCopia;
 		this.excel = excel;
 		this.habilitado = habilitado;
+		this.empresaEmision = empresaEmision;
 	}
 	
 	
@@ -198,6 +201,13 @@ public class Voucher {
 	}
 	public void setHabilitado(Boolean habilitado) {
 		this.habilitado = habilitado;
+	}
+	
+	public Empresa getEmpresaEmision() {
+		return empresaEmision;
+	}
+	public void setEmpresaEmision(Empresa empresaEmision) {
+		this.empresaEmision = empresaEmision;
 	}
 	@Override
 	  public String toString() {

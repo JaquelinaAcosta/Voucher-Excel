@@ -31,7 +31,7 @@ import com.voucherExcel.model.res.VoucherProceso;
 import com.voucherExcel.services.VoucherService;
 
 
-public class CSVHelper {
+public class ExcelHelper {
 	
 	private static Boolean errorExcel = false;
 	private static Boolean errorExcelCV = false;
@@ -43,7 +43,7 @@ public class CSVHelper {
 	static VoucherController controlador;
 	
 	
-	private static final Log logger = LogFactory.getLog(CSVHelper.class);
+	private static final Log logger = LogFactory.getLog(ExcelHelper.class);
 	
 	 public static String TYPECSV = "text/csv";
 	  static String[] HEADERsCSV = { "tipoDoc", "dni", "nombreApellido", "valor", "fechaDesde", "fechaHasta", "empresa", "estado", "codigoVoucher", "codigoBarras", "puntoVenta" };

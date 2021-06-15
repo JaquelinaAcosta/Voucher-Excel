@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.voucherExcel.ResponseMessage;
-import com.voucherExcel.helpers.CSVHelper;
+import com.voucherExcel.helpers.ExcelHelper;
 import com.voucherExcel.model.Excel;
 import com.voucherExcel.model.Voucher;
 import com.voucherExcel.model.res.VoucherProceso;
@@ -61,7 +61,7 @@ public class ExcelController {
 	public ResponseEntity<ResponseMessage> addVoucher(@RequestParam("file") MultipartFile file) {
 			String message = "";
 			
-			 if (CSVHelper.hasExcelFormat(file)) {
+			 if (ExcelHelper.hasExcelFormat(file)) {
 			      try {
 			    	  VoucherProceso pv = voucherService.addVoucherExcel(file);    	
 			    	  if(pv.getVouchers().isEmpty()) {
