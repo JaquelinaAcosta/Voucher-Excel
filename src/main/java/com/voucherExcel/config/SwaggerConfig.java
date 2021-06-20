@@ -23,9 +23,7 @@ public class SwaggerConfig {
 ////			      .securityContexts(Lists.newArrayList(securityContext()))
 ////		          .securitySchemes(Lists.newArrayList(apiKey()))
 ////			      .apiInfo(apiInfo());
-//			}
 //		
-//	}
-//	
+//	}	
 	
 }

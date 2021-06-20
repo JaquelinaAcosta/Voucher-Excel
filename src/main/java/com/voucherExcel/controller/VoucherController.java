@@ -45,6 +45,7 @@ import com.voucherExcel.ResponseMessage;
 import com.voucherExcel.helpers.ExcelHelper;
 import com.voucherExcel.model.Excel;
 import com.voucherExcel.model.Voucher;
+import com.voucherExcel.model.res.VoucherEstados;
 import com.voucherExcel.repository.FiltroVoucherRepository;
 import com.voucherExcel.services.VoucherService;
 
@@ -119,14 +120,14 @@ public class VoucherController {
 	//cambio de estado a eliminado
 	@RequestMapping(value = "/voucher/eliminar", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE,
 	consumes=MediaType.APPLICATION_JSON_VALUE)
-	public Voucher estadoEliminarVoucher(@RequestBody @Valid Voucher voucher) throws Exception {
+	public Voucher estadoEliminarVoucher(@RequestBody @Valid VoucherEstados voucher) throws Exception {
 		return voucherService.estadoEliminarVoucher(voucher);	
 	}
 	
 	//cambio de estado de Vencido a Emitido
 	@RequestMapping(value = "/voucher/extenderVigencia", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE,
 	consumes=MediaType.APPLICATION_JSON_VALUE)
-	public Voucher estadoExtenderVigencia(@RequestBody @Valid Voucher voucher) throws Exception {
+	public Voucher estadoExtenderVigencia(@RequestBody @Valid VoucherEstados voucher) throws Exception {
 		return voucherService.estadoExtenderVigencia(voucher);	
 	}
 	
@@ -134,7 +135,7 @@ public class VoucherController {
 	//cambio de estado de Utilizado a NoDisponible (ver campo observacion obligatorio en el FRONT)
 	@RequestMapping(value = "/voucher/no-disponible", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE,
 	consumes=MediaType.APPLICATION_JSON_VALUE)
-	public Voucher estadoNoDisponible(@RequestBody @Valid Voucher voucher) throws Exception {
+	public Voucher estadoNoDisponible(@RequestBody @Valid VoucherEstados voucher) throws Exception {
 		return voucherService.estadoNoDisponible(voucher);	
 	}
 		
@@ -142,7 +143,7 @@ public class VoucherController {
 	//cambio de estado de Utilizado a Duplicado (ver campo observacion obligatorio en el FRONT y validar la empresa de emision)
 	@RequestMapping(value = "/voucher/duplicado", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE,
 	consumes=MediaType.APPLICATION_JSON_VALUE)
-	public Voucher duplicadoVoucher(@RequestBody @Valid Voucher voucher) throws Exception {
+	public Voucher duplicadoVoucher(@RequestBody @Valid VoucherEstados voucher) throws Exception {
 		Voucher duplicado = voucherService.duplicadoVoucher(voucher);	
 		return voucherService.voucherDupliAsociado(voucher, duplicado);
 	}

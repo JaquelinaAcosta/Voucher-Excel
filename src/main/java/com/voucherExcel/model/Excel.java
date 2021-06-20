@@ -3,7 +3,7 @@ package com.voucherExcel.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.voucherExcel.model.Voucher.Empresa;
+import com.voucher.model.Empresa;
 
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import java.util.Date;
@@ -17,16 +17,8 @@ public class Excel {
 	private Date fecha;
 	private String estado;
 	private int cantidadRegistros;
-//	@DBRef
-//	private Usuario responsable; 
-	//@DBRef
-	private Empresa empresaEmision;
-	
-	public enum Empresa{
-		EMSA, CARSA
-	}
 
-  
+	private String empresaEmision;
 	private String responsable; 
 
 	
@@ -34,7 +26,7 @@ public class Excel {
 	
 	}
 	
-	public Excel(String _id, String nombreExcel, Date fecha, String estado, int cantidadRegistros, Empresa EmpresaEmision) {
+	public Excel(String _id, String nombreExcel, Date fecha, String estado, int cantidadRegistros, String EmpresaEmision) {
 	this._id = _id;
 	this.nombreExcel = nombreExcel;
 	this.fecha = fecha;
@@ -84,10 +76,10 @@ public class Excel {
 		this.responsable = responsable;
 	}
 	
-	public Empresa getEmpresaEmision() {
+	public String getEmpresaEmision() {
 		return empresaEmision;
 	}
-	public void setEmpresaEmision(Empresa empresaEmision) {
+	public void setEmpresaEmision(String empresaEmision) {
 		this.empresaEmision = empresaEmision;
 	}
 	

@@ -23,6 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voucherExcel.controller.VoucherController;
 import com.voucherExcel.model.Voucher;
+import com.voucherExcel.model.res.VoucherEstados;
 import com.voucherExcel.repository.FiltroVoucherRepository;
 import com.voucherExcel.repository.VoucherRepository;
 import com.voucherExcel.services.VoucherService;
@@ -85,11 +86,11 @@ class VoucherControllerTest {
 	public void estadoEliminarVoucher() throws Exception {
 	
 		//Cambiar de estado un voucher E a EL
-		Voucher voucherIng = voucher2();
 		Voucher voucherResp;
+		VoucherEstados ingreso = voucher2estados();
 		
-		Mockito.when(voucherServiceMock.estadoEliminarVoucher(voucherIng)).thenReturn(voucher4());
-		voucherResp = voucherController.estadoEliminarVoucher(voucherIng);
+		Mockito.when(voucherServiceMock.estadoEliminarVoucher(ingreso)).thenReturn(voucher4());
+		voucherResp = voucherController.estadoEliminarVoucher(ingreso);
 		Assertions.assertEquals(voucher4().getEstado(), voucherResp.getEstado());
 		
 //		mockMvc.perform(put("/api/voucher/eliminar")
@@ -101,11 +102,11 @@ class VoucherControllerTest {
 	@Test
 	public void estadoExtenderVigencia() throws Exception {
 	 //Un voucher que ya esta en estado vencido, extender vigencia
-		Voucher voucherIng = voucher5();
 		Voucher voucherResp;
+		VoucherEstados ingreso = voucher5estados();
 		
-		Mockito.when(voucherServiceMock.estadoExtenderVigencia(voucherIng)).thenReturn(voucher5E());
-		voucherResp = voucherController.estadoExtenderVigencia(voucherIng);
+		Mockito.when(voucherServiceMock.estadoExtenderVigencia(ingreso)).thenReturn(voucher5E());
+		voucherResp = voucherController.estadoExtenderVigencia(ingreso);
 		Assertions.assertEquals(voucher5E().getEstado(), voucherResp.getEstado());
 
 	}
@@ -113,11 +114,11 @@ class VoucherControllerTest {
 	@Test
 	public void estadoNoDisponible() throws Exception {
 	 //Un voucher que ya esta en estado utilizado, pasa a estado no-disponible
-		Voucher voucherIng = voucher1();
 		Voucher voucherResp;
+		VoucherEstados ingreso = voucher1estados();
 		
-		Mockito.when(voucherServiceMock.estadoNoDisponible(voucherIng)).thenReturn(voucher1ND());
-		voucherResp = voucherController.estadoNoDisponible(voucherIng);
+		Mockito.when(voucherServiceMock.estadoNoDisponible(ingreso)).thenReturn(voucher1ND());
+		voucherResp = voucherController.estadoNoDisponible(ingreso);
 		Assertions.assertEquals(voucher1ND().getEstado(), voucherResp.getEstado());
 
 	}
@@ -129,13 +130,14 @@ class VoucherControllerTest {
 		Voucher voucherIngDup = voucher1NDDupl();
 		Voucher voucherDup = voucher1E();
 		Voucher voucherResp;
+		VoucherEstados ingreso = voucher1NDestados();
 		
-		Mockito.when(voucherServiceMock.voucherDupliAsociado(voucherIng, voucherDup)).thenReturn(voucherIngDup);
-		Mockito.when(voucherServiceMock.duplicadoVoucher(voucherIng)).thenReturn(voucher1E());
+		Mockito.when(voucherServiceMock.voucherDupliAsociado(ingreso, voucherDup)).thenReturn(voucherIngDup);
+		Mockito.when(voucherServiceMock.duplicadoVoucher(ingreso)).thenReturn(voucher1E());
 		
 		
-		System.out.println(voucherServiceMock.duplicadoVoucher(voucherIng));
-		System.out.println(voucherServiceMock.voucherDupliAsociado(voucherIng, voucherDup).getIdCopia());
+		System.out.println(voucherServiceMock.duplicadoVoucher(ingreso));
+		System.out.println(voucherServiceMock.voucherDupliAsociado(ingreso, voucherDup).getIdCopia());
 		
 		//voucherResp = voucherController.duplicadoVoucher(voucherIng);
 		
@@ -143,7 +145,7 @@ class VoucherControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(asJsonString(voucherIng)));
 		
-		voucherResp = voucherController.duplicadoVoucher(voucherIng);
+		voucherResp = voucherController.duplicadoVoucher(ingreso);
 		System.out.println(voucherResp);
 	//	Assertions.assertEquals(voucher1E().get_id(), voucherResp.getIdCopia());
 		
@@ -187,6 +189,13 @@ class VoucherControllerTest {
 		return mockVoucher;
 	}
 	
+	private VoucherEstados voucher1estados() throws ParseException {
+		VoucherEstados ve = new VoucherEstados();
+		ve.setUser("user");
+		ve.setVoucher(voucher1());
+		return ve;
+	}
+	
 	private Voucher voucher1ND() throws ParseException {
 		Voucher mockVoucher = new Voucher();
 		mockVoucher.set_id("111");
@@ -199,6 +208,13 @@ class VoucherControllerTest {
 		mockVoucher.setFacturaAsociada("1111112222");
 
 		return mockVoucher;
+	}
+	
+	private VoucherEstados voucher1NDestados() throws ParseException {
+		VoucherEstados ve = new VoucherEstados();
+		ve.setUser("user");
+		ve.setVoucher(voucher1ND());
+		return ve;
 	}
 	
 	private Voucher voucher1NDDupl() throws ParseException {
@@ -242,6 +258,13 @@ class VoucherControllerTest {
 		return mockVoucher;
 	}
 	
+	private VoucherEstados voucher2estados() throws ParseException {
+		VoucherEstados ve = new VoucherEstados();
+		ve.setUser("user");
+		ve.setVoucher(voucher2());
+		return ve;
+	}
+	
 	private Voucher voucher3() throws ParseException {
 		Voucher mockVoucher = new Voucher();
 		mockVoucher.set_id("333");
@@ -279,6 +302,13 @@ class VoucherControllerTest {
 		mockVoucher.setDni("27890688");
 
 		return mockVoucher;
+	}
+	
+	private VoucherEstados voucher5estados() throws ParseException {
+		VoucherEstados ve = new VoucherEstados();
+		ve.setUser("user");
+		ve.setVoucher(voucher5());
+		return ve;
 	}
 	
 	private Voucher voucher5E() throws ParseException {

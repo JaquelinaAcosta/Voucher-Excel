@@ -106,12 +106,6 @@
 		    <version>1.9.5</version>
 		    <scope>test</scope>
 		</dependency>
-
-<!-- 		<dependency> -->
-<!-- 		    <groupId>io.springfox</groupId> -->
-<!-- 		    <artifactId>springfox-boot-starter</artifactId> -->
-<!-- 		    <version>3.0.0</version> -->
-<!-- 		</dependency> -->
  		
 <!-- 		<dependency> -->
 <!--   			<groupId>com.voucherMiddleware</groupId> -->
@@ -119,12 +113,12 @@
 <!-- 			<version>0.0.1-SNAPSHOT</version> -->
 <!--         </dependency>  -->
         
-        
-<!-- 		<dependency> -->
-<!--   			<groupId>com.voucher</groupId> -->
-<!-- 			<artifactId>voucher-usuario</artifactId> -->
-<!-- 			<version>0.0.1-SNAPSHOT</version> -->
-<!--         </dependency>    -->
+<!--         dependencia de usuario -->
+		<dependency>
+  			<groupId>com.voucher</groupId>
+			<artifactId>voucher</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+        </dependency>   
 
 
 		

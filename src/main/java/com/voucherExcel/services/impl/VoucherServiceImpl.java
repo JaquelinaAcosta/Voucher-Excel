@@ -14,9 +14,11 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.voucher.model.Empresa;
 import com.voucherExcel.helpers.ExcelHelper;
 import com.voucherExcel.model.Excel;
 import com.voucherExcel.model.Voucher;
+import com.voucherExcel.model.res.VoucherEstados;
 import com.voucherExcel.model.res.VoucherProceso;
 import com.voucherExcel.repository.ExcelRepository;
 import com.voucherExcel.repository.VoucherRepository;
@@ -50,7 +52,7 @@ public class VoucherServiceImpl implements VoucherService {
 
 	 
 	@Override
-	public VoucherProceso addVoucherExcel(MultipartFile file) {
+	public VoucherProceso addVoucherExcel(MultipartFile file, String empresa, String usuarioResponsable) {
 		bandera = false;
 		int registros = 0;
 		try {
@@ -67,16 +69,16 @@ public class VoucherServiceImpl implements VoucherService {
 		      }
 		    //Creacion excel
 		      Excel excel = new Excel();
-		      excel.setEstado("IMPORTANDO");
+		      excel.setEstado("IMPORTADO");
 			  excel.setFecha(new Date());
-			  excel.setNombreExcel("Voucher " + (new Date()).toString());
+			  excel.setNombreExcel("Voucher " + f2.format(new Date()) + " " + empresa);
 			  excel.setCantidadRegistros(registros);
+			  excel.setEmpresaEmision(empresa);
+			  excel.setResponsable(usuarioResponsable);
 			  
-			  //////  OBTENER USUARIO LOGUEADO  //////
-			  excel.setResponsable("no_usuario");
+//			  //////  OBTENER USUARIO LOGUEADO  //////
+//			  excel.setResponsable("no_usuario");
 			  
-			  
-			  logger.info(excel);
 			  Excel excelAdd = excelRepository.save(excel);
 			  
 			  //comprobar error
@@ -92,7 +94,7 @@ public class VoucherServiceImpl implements VoucherService {
 		     
 			  for(Voucher v : vouchers) {
 		    	  v.setExcel(excelAdd);
-		    	  v.setEstadosPasados("EMITIDO el día "+ f2.format(excelAdd.getFecha())+" por el usuario: "+"agregar usuario");
+		    	  v.setEmpresaEmision(empresa);
 		    	  v.setHabilitado(false);
 		      }
 			  
@@ -149,14 +151,14 @@ public class VoucherServiceImpl implements VoucherService {
 
 	//Elimiar voucher
 	@Override
-	public Voucher estadoEliminarVoucher(Voucher voucher) throws Exception {
-		Optional<Voucher> v = voucherRepository.findById(voucher.get_id());
+	public Voucher estadoEliminarVoucher(VoucherEstados voucher) throws Exception {
+		Optional<Voucher> v = voucherRepository.findById(voucher.getVoucher().get_id());
+		Voucher vouch = voucher.getVoucher();
 		if(v.get().getEstado().equals("E")) {
-			voucher.setEstadosPasados(v.get().getEstadosPasados()+'\n'+"ELIMINADO el día "+ f2.format(new Date())+" por el usuario: "+"agregar usuario");
-			voucher.setEstado("EL");
-			//probar si es necesaria esta linea
-			voucher.setObservacion(voucher.getObservacion());
-			Voucher voucherAdd = voucherRepository.save(voucher);
+			vouch.setEstadosPasados(v.get().getEstadosPasados()+'\n'+"ELIMINADO el día "+ f2.format(new Date())+" por el usuario: "+ voucher.getUser());
+			vouch.setEstado("EL");
+			vouch.setObservacion(vouch.getObservacion());
+			Voucher voucherAdd = voucherRepository.save(vouch);
 			return voucherAdd;
 		}else {
 			return v.get();
@@ -167,10 +169,11 @@ public class VoucherServiceImpl implements VoucherService {
 
 	//Extender vigencia de voucher vencido
 	@Override
-	public Voucher estadoExtenderVigencia(Voucher voucher) throws Exception {
-		Optional<Voucher> v = voucherRepository.findById(voucher.get_id());
+	public Voucher estadoExtenderVigencia(VoucherEstados vouch) throws Exception {
+		Optional<Voucher> v = voucherRepository.findById(vouch.getVoucher().get_id());
+		Voucher voucher = vouch.getVoucher();
 		if(v.get().getEstado().equals("V")) {
-			voucher.setEstadosPasados(v.get().getEstadosPasados()+'\n'+"EMITIDO con extención de VIGENCIA, el día "+ f2.format(new Date())+" por el usuario: "+"agregar usuario");
+			voucher.setEstadosPasados(v.get().getEstadosPasados()+'\n'+"EMITIDO con extención de VIGENCIA, el día "+ f2.format(new Date())+" por el usuario: "+vouch.getUser());
 			voucher.setEstado("E");
 			Voucher voucherAdd = voucherRepository.save(voucher);
 			return voucherAdd;
@@ -181,10 +184,11 @@ public class VoucherServiceImpl implements VoucherService {
 
 
 	@Override
-	public Voucher estadoNoDisponible(Voucher voucher) throws Exception {
-		Optional<Voucher> v = voucherRepository.findById(voucher.get_id());
+	public Voucher estadoNoDisponible(VoucherEstados vouch) throws Exception {
+		Optional<Voucher> v = voucherRepository.findById(vouch.getVoucher().get_id());
+		Voucher voucher = vouch.getVoucher();
 		if(v.get().getEstado().equals("U")) {
-				voucher.setEstadosPasados(v.get().getEstadosPasados()+'\n'+"NO DISPONIBLE el día "+ f2.format(new Date())+" por el usuario: "+"agregar usuario");
+				voucher.setEstadosPasados(v.get().getEstadosPasados()+'\n'+"NO DISPONIBLE el día "+ f2.format(new Date())+" por el usuario: "+vouch.getUser());
 				voucher.setEstado("ND");
 				Voucher voucherAdd = voucherRepository.save(voucher);
 				return voucherAdd;
@@ -196,8 +200,8 @@ public class VoucherServiceImpl implements VoucherService {
 
 
 	@Override
-	public Voucher duplicadoVoucher(Voucher voucher) throws Exception {
-		Optional<Voucher> v = voucherRepository.findById(voucher.get_id());
+	public Voucher duplicadoVoucher(VoucherEstados vouch) throws Exception {
+		Optional<Voucher> v = voucherRepository.findById(vouch.getVoucher().get_id());
 		if (v.get().getIdCopia() == null && v.get().getEstado().equals("ND")) {;
 			Voucher voucherD = new Voucher();
 			voucherD.setCodigoVoucher(v.get().getCodigoVoucher()+"-D");
@@ -212,7 +216,7 @@ public class VoucherServiceImpl implements VoucherService {
 			voucherD.setValor(v.get().getValor());
 			voucherD.setPuntoVenta(v.get().getPuntoVenta());
 			voucherD.setCodigoBarras(v.get().getCodigoBarras());
-			voucherD.setEstadosPasados("DUPLICADO del voucher "+v.get().getCodigoVoucher()+", el día "+f2.format(new Date())+" por el usuario: "+"agregar usuario");
+			voucherD.setEstadosPasados("DUPLICADO del voucher "+v.get().getCodigoVoucher()+", el día "+f2.format(new Date())+" por el usuario: "+vouch.getUser());
 			//TODO: hacer set de empresa de emision
 			
 			return voucherRepository.save(voucherD);
@@ -223,10 +227,11 @@ public class VoucherServiceImpl implements VoucherService {
 
 
 	@Override
-	public Voucher voucherDupliAsociado(Voucher voucher, Voucher duplicado) {
+	public Voucher voucherDupliAsociado(VoucherEstados vouch, Voucher duplicado) {
 		Optional<Voucher> v = voucherRepository.findById(duplicado.get_id());
+		Voucher voucher = vouch.getVoucher();
 		voucher.setIdCopia(v.get().get_id());
-		voucher.setEstadosPasados(v.get().getEstadosPasados()+'\n'+"DUPLICADO el día "+f2.format(new Date())+" por el usuario: "+"agregar usuario");
+		voucher.setEstadosPasados(v.get().getEstadosPasados()+'\n'+"DUPLICADO el día "+f2.format(new Date())+" por el usuario: "+vouch.getUser());
 		return voucherRepository.save(voucher);
 		
 	}
