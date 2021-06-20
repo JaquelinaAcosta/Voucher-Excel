@@ -7,6 +7,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.voucher.model.Empresa;
+
 //import com.voucher.model.Empresa;
 
 @Document
@@ -25,8 +27,7 @@ public class Voucher {
 	private String codigoVoucher;
 	private String codigoBarras;
 	private int puntoVenta;
-	//@DBRef
-	private Empresa empresaEmision;
+	private String empresaEmision;
 	private String estadosPasados;
 	private String facturaAsociada;
 	private String Observacion;
@@ -35,9 +36,6 @@ public class Voucher {
 	private Excel excel;
 	private Boolean habilitado;
 	
-	public enum Empresa{
-		EMSA, CARSA
-	}
 	public Voucher() {
 		super();
 	}
@@ -61,7 +59,7 @@ public class Voucher {
 	public Voucher(String _id, int tipoDoc, String dni, String nombreApellido, int valor, Date fechaDesde,
 			Date fechaHasta, String empresa, String estado, String codigoVoucher, String codigoBarras,
 			int puntoVenta, String estadosPasados, String facturaAsociada,
-			String observacion, String idCopia, Excel excel, Boolean habilitado, Empresa EmpresaEmision) {
+			String observacion, String idCopia, Excel excel, Boolean habilitado, String EmpresaEmision) {
 
 		this._id = _id;
 		this.tipoDoc = tipoDoc;
@@ -83,6 +81,7 @@ public class Voucher {
 		this.excel = excel;
 		this.habilitado = habilitado;
 		this.empresaEmision = empresaEmision;
+
 	}
 	
 	
@@ -203,12 +202,14 @@ public class Voucher {
 		this.habilitado = habilitado;
 	}
 	
-	public Empresa getEmpresaEmision() {
+	public String getEmpresaEmision() {
 		return empresaEmision;
 	}
-	public void setEmpresaEmision(Empresa empresaEmision) {
+	public void setEmpresaEmision(String empresaEmision) {
 		this.empresaEmision = empresaEmision;
 	}
+
+	
 	@Override
 	  public String toString() {
 	    return "Voucher [_id=" + _id + ", tipoDoc=" + tipoDoc + ", dni=" + dni + ", nombreApellido=" + nombreApellido + 

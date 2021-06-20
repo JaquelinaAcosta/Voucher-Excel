@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.voucherExcel.controller.ExcelController;
 import com.voucherExcel.model.Excel;
+import com.voucherExcel.model.res.ExcelDisponible;
 import com.voucherExcel.repository.ExcelRepository;
 import com.voucherExcel.repository.FiltroExcelRepository;
 import com.voucherExcel.repository.VoucherRepository;
@@ -69,7 +70,7 @@ class ExcelControllerTest {
 		//Cambio de estado a Cancelado
 		Mockito.when(excelRepository.findById("222")).thenReturn(mockExcel2);
 		
-		Mockito.when(excelRepository.findByEstado("IMPORTANDO")).thenReturn(excelList());
+		Mockito.when(excelRepository.findByEstado("IMPORTADO")).thenReturn(excelList());
 		
 		//get ppor codigo de voucher
 		//Mockito.when(voucherRepository.findByCodigoVoucher("138592")).thenReturn(voucher2());
@@ -81,10 +82,11 @@ class ExcelControllerTest {
 		//Cambiar de estado de un Excel de importado a disponible
 		Excel excelIng = excel1();
 		Excel excelResp;
+		ExcelDisponible excelDisp = excelDisp();
 		
-		Mockito.when(excelService.updateExcel(excelIng)).thenReturn(excel1D());
+		Mockito.when(excelService.updateExcel(excelDisp)).thenReturn(excel1D());
 		
-		excelResp = excelController.updateExcel(excelIng);
+		excelResp = excelController.updateExcel(excelDisp);
 		Assertions.assertEquals(excel1D().getEstado(), excelResp.getEstado());
 		
 	}
@@ -107,8 +109,8 @@ class ExcelControllerTest {
 		//Get por estados
 		List<Excel> excelResp;
 		
-		Mockito.when(excelService.getExcelsEstado("IMPORTANDO")).thenReturn(excelList());
-		excelResp = excelController.getExcelEstados("IMPORTANDO");
+		Mockito.when(excelService.getExcelsEstado("IMPORTADO")).thenReturn(excelList());
+		excelResp = excelController.getExcelEstados("IMPORTADO");
 		Assertions.assertEquals(excelList().get(0).get_id(), excelResp.get(0).get_id());
 		Assertions.assertEquals(excelList().get(1).get_id(), excelResp.get(1).get_id());
 		
@@ -121,9 +123,16 @@ class ExcelControllerTest {
 		mockExcel.setNombreExcel("Excel 1");
 		mockExcel.setFecha(f2.parse("2021/06/10"));
 		mockExcel.setCantidadRegistros(20);
-		mockExcel.setEstado("IMPORTANDO");
+		mockExcel.setEstado("IMPORTADO");
 
 		return mockExcel;
+	}
+	
+	private ExcelDisponible excelDisp() throws ParseException {
+		ExcelDisponible ed = new ExcelDisponible();
+		ed.setExcel(excel1());
+		ed.setResponsable("Nombre User");
+		return ed;	
 	}
 	
 	private Excel excel1D() throws ParseException {

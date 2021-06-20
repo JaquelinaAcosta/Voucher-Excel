@@ -27,10 +27,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.voucher.model.Empresa;
 import com.voucherExcel.ResponseMessage;
 import com.voucherExcel.helpers.ExcelHelper;
 import com.voucherExcel.model.Excel;
 import com.voucherExcel.model.Voucher;
+import com.voucherExcel.model.res.ExcelDisponible;
 import com.voucherExcel.model.res.VoucherProceso;
 import com.voucherExcel.repository.FiltroExcelRepository;
 import com.voucherExcel.services.ExcelService;
@@ -58,12 +60,11 @@ public class ExcelController {
 			method = RequestMethod.POST, 
 			produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 
-	public ResponseEntity<ResponseMessage> addVoucher(@RequestParam("file") MultipartFile file) {
+	public ResponseEntity<ResponseMessage> addVoucher(@RequestBody @RequestParam("file") MultipartFile file, String empresa, String usuarioResponsable) {
 			String message = "";
-			
 			 if (ExcelHelper.hasExcelFormat(file)) {
 			      try {
-			    	  VoucherProceso pv = voucherService.addVoucherExcel(file);    	
+			    	  VoucherProceso pv = voucherService.addVoucherExcel(file, empresa, usuarioResponsable);    	
 			    	  if(pv.getVouchers().isEmpty()) {
 			    		  return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(pv.getError()));
 			    	  }else {
@@ -83,11 +84,10 @@ public class ExcelController {
 	
 	//modificacion de estado Excel "DISPONIBLE" y habilitacion de voucher para que sea utilizable
 		@RequestMapping(value = "/excel/disponible", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE,
-		consumes=MediaType.APPLICATION_JSON_VALUE)
-		public Excel updateExcel(@RequestBody Excel excel) throws Exception {
-			excel.setEstado("DISPONIBLE");
-			return excelService.updateExcel(excel);	
-		}
+			consumes=MediaType.APPLICATION_JSON_VALUE)
+			public Excel updateExcel(@RequestBody ExcelDisponible excel) throws Exception {
+				return excelService.updateExcel(excel);	
+			}
 		
 		//modificacion de estado Excel "CANCELADO" y eliminacion del Voucher asocialdo (Eliminacion fisica para que no cree conflictos y ocupe memoria en BD)
 		@RequestMapping(value = "/excel/cancelar", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE,

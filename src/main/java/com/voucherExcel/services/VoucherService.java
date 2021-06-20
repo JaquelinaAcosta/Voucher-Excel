@@ -7,8 +7,10 @@ import javax.validation.Valid;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.voucher.model.Empresa;
 import com.voucherExcel.model.Excel;
 import com.voucherExcel.model.Voucher;
+import com.voucherExcel.model.res.VoucherEstados;
 import com.voucherExcel.model.res.VoucherProceso;
 
 public interface VoucherService {
@@ -16,7 +18,7 @@ public interface VoucherService {
 	//Voucher updateVoucher(Voucher voucher) throws Exception;
 	Voucher deleteVoucher(String vpucherId);
 	void addVoucher(MultipartFile voucher);
-	VoucherProceso addVoucherExcel(MultipartFile voucher);
+	VoucherProceso addVoucherExcel(MultipartFile voucher, String empresa, String usuarioResponsable);
 	List<Voucher> getVouchers();
 	Voucher getCodigoVoucher(String cv);
 	Optional<Voucher> getVoucher(String id);
@@ -24,18 +26,18 @@ public interface VoucherService {
 	
 	//Estados de voucher
 	//cambio de estado ELIMINAR
-	Voucher estadoEliminarVoucher(Voucher voucher) throws Exception;
+	Voucher estadoEliminarVoucher(VoucherEstados voucher) throws Exception;
 	
 	//Extender vigencia voucher VENCIDO
-	Voucher estadoExtenderVigencia(Voucher voucher) throws Exception;
+	Voucher estadoExtenderVigencia(VoucherEstados voucher) throws Exception;
 	
 	//Cambio de estado NO DISPONIBLE
-	Voucher estadoNoDisponible(Voucher voucher) throws Exception;
+	Voucher estadoNoDisponible(VoucherEstados voucher) throws Exception;
 	
 	//Hacer DUPLICADO de un voucher No-Disponible
-	Voucher duplicadoVoucher(Voucher voucher) throws Exception;
+	Voucher duplicadoVoucher(VoucherEstados voucher) throws Exception;
 	
 	//Asociar voucher duplicado
-	Voucher voucherDupliAsociado(Voucher voucher, Voucher duplicado);
+	Voucher voucherDupliAsociado(VoucherEstados voucher, Voucher duplicado);
 
 }
