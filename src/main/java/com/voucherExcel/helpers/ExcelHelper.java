@@ -55,59 +55,7 @@ public class ExcelHelper {
 	    }
 
 	    return true;
-	  }
-
-	  public static List<Voucher> csvToVouchers(InputStream is){
-	    try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-	        CSVParser csvParser = new CSVParser(fileReader,
-	            CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim());) {
-
-	      List<Voucher> vouchers = new ArrayList<Voucher>();
-
-	      Iterable<CSVRecord> csvRecords = csvParser.getRecords();
-	     
-	      DateFormat fechaDesde = new SimpleDateFormat("dd-MM-yyyy");
-	      DateFormat fechaHasta = new SimpleDateFormat("dd-MM-yyyy");
-
-	      for (CSVRecord csvRecord : csvRecords) {
-	    	  logger.info(csvRecords);
-	    	  logger.info(csvRecord);
-
-	    	  Voucher voucher = new Voucher(
-//	              Integer.parseInt(csvRecord.get("tipoDoc")),
-//	              csvRecord.get("dni"),
-//	              csvRecord.get("nombreApellido"),
-//	              Integer.parseInt(csvRecord.get("valor")),
-//	              fechaDesde.parse(csvRecord.get("fechaDesde")),
-//	              fechaHasta.parse(csvRecord.get("fechaHasta")),
-//	              csvRecord.get("empresa"),
-//	              csvRecord.get("estado"),
-//	              csvRecord.get("codigoVoucher"),
-//	              csvRecord.get("codigoBarras"),
-//	              Integer.parseInt(csvRecord.get("puntoVenta"))
-	            );
-
-	        vouchers.add(voucher);
-	        
-	      }
-	      
-	      
-
-	      return vouchers;
-	   
-	  }catch (IOException e) {
-	      throw new RuntimeException("fail to parse CSV file: " + e.getMessage());
-	    } catch (NumberFormatException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-//		} catch (ParseException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-		}
-		return null;}
-	
-	
-	
+	  }	
 	
 	
   public static String TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
