@@ -62,33 +62,6 @@ public class VoucherController {
 
 	private static final Log logger = LogFactory.getLog(VoucherController.class);
 	
-	//Para carga de archivo csv, todavia no funciona bien
-//	@RequestMapping(value = "/csv/voucher",headers = "content-type=multipart/*", 
-//			method = RequestMethod.POST, 
-//			produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-//	  public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("file") MultipartFile file) {
-//		logger.info("ALTA Controller");
-//	    String message = "";
-//
-//	    if (CSVHelper.hasCSVFormat(file)) {
-//	      try {
-//	    	  logger.info("TRY Controller");
-//	    	  voucherService.addVoucher(file);
-//
-//	        message = "Uploaded the file successfully: " + file.getOriginalFilename();
-//	        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
-//	      } catch (Exception e) {
-//	        message = "Could not upload the file: " + file.getOriginalFilename() + "!";
-//	        return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
-//	      }
-//	    }
-//
-//	    message = "Please upload a csv file!";
-//	    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(message));
-//	  }
-	
-	
-	
 	//listado de todos los voucher
 	@RequestMapping(value = "/voucher/todos", method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<Voucher>> getVouchers(){
@@ -156,8 +129,10 @@ public class VoucherController {
 	        @RequestParam(required = false) String codigo,
 	        @RequestParam(required = false) String fechaD,
 	        @RequestParam(required = false) String fechaH,
+	        @RequestParam(required = false) String empresaEmision,
+	        @RequestParam(required = false) String role,
 	        @RequestParam(defaultValue = "0") int page,
-	        @RequestParam(defaultValue = "3") int size
+	        @RequestParam(defaultValue = "5") int size
 	      ) {
 
 	    try {
@@ -165,48 +140,62 @@ public class VoucherController {
 	      Pageable paging = PageRequest.of(page, size);
 	      
 	      Page<Voucher> pageVous;
-	      
+	      LocalDate desde = LocalDate.parse(fechaD);
+		  LocalDate hasta = LocalDate.parse(fechaH);
 	            
-	      if (estado == null && dni == null && codigo == null && fechaD== null && fechaH== null)
-	      	  pageVous = filtroVoucherRepository.findAll(paging);
-	      else if (codigo != null) {
-	    	  //como el codigo de voucher es unico y no se repite, al aplicar el filtro con codigo solo ingresa en este if
-	    	  pageVous = filtroVoucherRepository.findByCodigoVoucher(codigo, paging);
-	      }
-	      else if (fechaD != null && fechaH != null && estado != null && dni != null) { 
-	    	  LocalDate desde = LocalDate.parse(fechaD);
-			  LocalDate hasta = LocalDate.parse(fechaH);
-	    	  pageVous = filtroVoucherRepository.findByDniAndEstadoAndFechaHasta(dni, estado, desde, hasta, paging);
-	      }
-	      else if (estado != null && dni != null && fechaD == null && fechaH == null) {
-	    	  pageVous = filtroVoucherRepository.findByEstadoAndDni(estado, dni, paging);
-	      }
-	      else if (fechaD != null && fechaH != null && estado != null && dni == null) { 
-	    	  LocalDate desde = LocalDate.parse(fechaD);
-			  LocalDate hasta = LocalDate.parse(fechaH);
-	    	  pageVous = filtroVoucherRepository.findByEstadoAndFechaHasta(estado, desde, hasta, paging);
-	      }
-	      else if (fechaD != null && fechaH != null && estado == null && dni != null) {
-	    	  LocalDate desde = LocalDate.parse(fechaD);
-			  LocalDate hasta = LocalDate.parse(fechaH);
-	    	  pageVous = filtroVoucherRepository.findByDniAndFechaHasta(dni, desde, hasta, paging);
-	      }
-	      else if (fechaD != null && fechaH != null && estado == null && dni == null) { 
-	    	  LocalDate desde = LocalDate.parse(fechaD);
-			  LocalDate hasta = LocalDate.parse(fechaH);
-	    	  pageVous = filtroVoucherRepository.findByFechaHasta(desde, hasta, paging);
-	      }
-	      else if (estado != null && dni == null && fechaD == null && fechaH == null) {
-	    	  pageVous = filtroVoucherRepository.findByEstado(estado, paging);
-	      }
-	      else {
-	    	  pageVous = filtroVoucherRepository.findByDni(dni, paging);
-	      }
+		  
+		  if (role.equals("ROOT")) {
+		      if (estado == null && dni == null && codigo == null && fechaD == null && fechaH == null)
+		      	  pageVous = filtroVoucherRepository.findAll(paging);
+		      else if (codigo != null) {
+		    	  //como el codigo de voucher es unico y no se repite, al aplicar el filtro con codigo solo ingresa en este if
+		    	  pageVous = filtroVoucherRepository.findByCodigoVoucher(codigo, paging);
+		      }
+		      else if (estado != null && dni != null) { 
+		    	  pageVous = filtroVoucherRepository.findByDniAndEstadoAndFechaHasta(dni, estado, desde, hasta, paging);
+		      }
+		      else if (estado != null && dni == null) { 
+		    	  pageVous = filtroVoucherRepository.findByEstadoAndFechaHasta(estado, desde, hasta, paging);
+		      }
+		      else if ( estado == null && dni != null) {
+		    	  pageVous = filtroVoucherRepository.findByDniAndFechaHasta(dni, desde, hasta, paging);
+		      }
+		      else if (fechaD != null && fechaH != null && estado == null && dni == null) { 
+		    	  pageVous = filtroVoucherRepository.findByFechaHasta(desde, hasta, paging);
+		      }
+		      else {
+		    	  pageVous = filtroVoucherRepository.findByDni(dni, paging);
+		      }
    
+		  }else {
+			  if (estado == null && dni == null && codigo == null && fechaD == null && fechaH == null)
+		      	  pageVous = filtroVoucherRepository.findByEmpresaEmision(empresaEmision, paging);
+		      else if (codigo != null) {
+		    	  //como el codigo de voucher es unico y no se repite, al aplicar el filtro con codigo solo ingresa en este if
+		    	  pageVous = filtroVoucherRepository.findByCodigoVoucherAndEmpresaEmision(codigo, empresaEmision, paging);
+		      }
+		      else if (estado != null && dni != null) { 
+		    	  pageVous = filtroVoucherRepository.findByDniAndEstadoAndFechaHastaAndEmpresaEmision(dni, estado, desde, hasta, empresaEmision, paging);
+		      }
+		      else if (estado != null && dni == null) { 
+		    	  pageVous = filtroVoucherRepository.findByEstadoAndFechaHastaAndEmpresaEmision(estado, desde, hasta, empresaEmision, paging);
+		      }
+		      else if ( estado == null && dni != null) {
+		    	  pageVous = filtroVoucherRepository.findByDniAndFechaHastaAndEmpresaEmision(dni, desde, hasta, empresaEmision, paging);
+		      }
+		      else if (fechaD != null && fechaH != null && estado == null && dni == null) { 
+		    	  pageVous = filtroVoucherRepository.findByFechaHastaAndEmpresaEmision(desde, hasta, empresaEmision, paging);
+		      }
+		      else {
+		    	  pageVous = filtroVoucherRepository.findByDniAndEmpresaEmision(dni, empresaEmision, paging);
+		      }
+		  }
+	      
+	      
 	      vouchers = pageVous.getContent();
 	      
 	      Map<String, Object> response = new HashMap<>();
-	      response.put("estados", vouchers);
+	      response.put("vouchers", vouchers);
 	      response.put("currentPage", pageVous.getNumber());
 	      response.put("totalItems", pageVous.getTotalElements());
 	      response.put("totalPages", pageVous.getTotalPages());
