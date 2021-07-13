@@ -119,8 +119,10 @@ public class ExcelController {
 		        @RequestParam(required = false) String estado,
 		        @RequestParam(required = false) String fechaD,
 		        @RequestParam(required = false) String fechaH,
+		        @RequestParam(required = false) String empresaEmision,
+		        @RequestParam(required = false) String role,
 		        @RequestParam(defaultValue = "0") int page,
-		        @RequestParam(defaultValue = "3") int size
+		        @RequestParam(defaultValue = "5") int size
 		      ) {
 
 		    try {
@@ -128,29 +130,46 @@ public class ExcelController {
 		      Pageable paging = PageRequest.of(page, size);
 		      
 		      Page<Excel> pageE;
-		      
-		            
-		      if (estado == null && fechaD== null && fechaH== null)
-		      	  pageE = filtroExcelRepository.findAll(paging);
-		      else if (fechaD != null && fechaH != null && estado != null) { 
-		    	  LocalDate desde = LocalDate.parse(fechaD);
-				  LocalDate hasta = LocalDate.parse(fechaH);
-		    	  pageE = filtroExcelRepository.findByEstadoAndFecha(estado, desde, hasta, paging);
-		      }
-		      else if (estado == null && fechaD != null && fechaH != null) {
-		    	  LocalDate desde = LocalDate.parse(fechaD);
-				  LocalDate hasta = LocalDate.parse(fechaH);
-		    	  pageE = filtroExcelRepository.findByFecha(desde, hasta, paging);
-		      }  
-		      else {
-		    	  pageE = filtroExcelRepository.findByEstado(estado, paging);
+
+		      if(role.equals("ROOT")) {     
+			      if (estado == null && fechaD== null && fechaH== null)
+			      	  pageE = filtroExcelRepository.findAll(paging);
+			      else if (fechaD != null && fechaH != null && estado != null) { 
+			    	  LocalDate desde = LocalDate.parse(fechaD);
+					  LocalDate hasta = LocalDate.parse(fechaH);
+			    	  pageE = filtroExcelRepository.findByEstadoAndFecha(estado, desde, hasta, paging);
+			      }
+			      else if (estado == null && fechaD != null && fechaH != null) {
+			    	  LocalDate desde = LocalDate.parse(fechaD);
+					  LocalDate hasta = LocalDate.parse(fechaH);
+			    	  pageE = filtroExcelRepository.findByFecha(desde, hasta, paging);
+			      }  
+			      else {
+			    	  pageE = filtroExcelRepository.findByEstado(estado, paging);
+			      }
+		      }else {
+		          if (estado == null && fechaD== null && fechaH== null)
+			      	  pageE = filtroExcelRepository.findByEmpresaEmision(empresaEmision, paging);
+			      else if (fechaD != null && fechaH != null && estado != null) { 
+			    	  LocalDate desde = LocalDate.parse(fechaD);
+					  LocalDate hasta = LocalDate.parse(fechaH);
+			    	  pageE = filtroExcelRepository.findByEstadoAndFechaAndEmpresaEmision(estado, desde, hasta, empresaEmision, paging);
+			      }
+			      else if (estado == null && fechaD != null && fechaH != null) {
+			    	  LocalDate desde = LocalDate.parse(fechaD);
+					  LocalDate hasta = LocalDate.parse(fechaH);
+			    	  pageE = filtroExcelRepository.findByFechaAndEmpresaEmision(desde, hasta, empresaEmision, paging);
+			      }  
+			      else {
+			    	  pageE = filtroExcelRepository.findByEstadoAndEmpresaEmision(estado, empresaEmision, paging);
+			      }
 		      }
 	   
 		      excels = pageE.getContent();
 		      System.out.println(excels);
 
 		      Map<String, Object> response = new HashMap<>();
-		      response.put("estados", excels);
+		      response.put("excels", excels);
 		      response.put("currentPage", pageE.getNumber());
 		      response.put("totalItems", pageE.getTotalElements());
 		      response.put("totalPages", pageE.getTotalPages());

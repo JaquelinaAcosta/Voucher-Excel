@@ -17,7 +17,6 @@ public interface VoucherService {
 	
 	//Voucher updateVoucher(Voucher voucher) throws Exception;
 	Voucher deleteVoucher(String vpucherId);
-	void addVoucher(MultipartFile voucher);
 	VoucherProceso addVoucherExcel(MultipartFile voucher, String empresa, String usuarioResponsable);
 	List<Voucher> getVouchers();
 	Voucher getCodigoVoucher(String cv);

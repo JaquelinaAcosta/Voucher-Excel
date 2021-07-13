@@ -38,18 +38,6 @@ public class VoucherServiceImpl implements VoucherService {
 	private SimpleDateFormat f2 = new SimpleDateFormat("dd/MM/yyyy");
 	
 	private static final Log logger = LogFactory.getLog(VoucherServiceImpl.class);
-
-	  public void addVoucher(MultipartFile file) {
-		bandera = false;
-	    try {
-	      List<Voucher> vouchers = ExcelHelper.csvToVouchers(file.getInputStream());
-
-	      voucherRepository.saveAll(vouchers);
-	    } catch (IOException e) {
-	      throw new RuntimeException("fail to store csv data: " + e.getMessage());
-	    }
-	  }
-
 	 
 	@Override
 	public VoucherProceso addVoucherExcel(MultipartFile file, String empresa, String usuarioResponsable) {
