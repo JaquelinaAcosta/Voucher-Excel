@@ -55,9 +55,10 @@ public class VoucherServiceImpl implements VoucherService {
 		    		  bandera = true;
 		    		  voucherProceso.setError(voucherProceso.getError() +'\n'+"El codigo de voucher: " + vAux.getCodigoVoucher() + " esta repetido dentro del sistema");
 		    	  }
-		    	  if(v.getCodigoVoucher() == null ) {
-		    		  vouchers1.remove(v);
-		    		  registros--;
+		    	  if(v.getCodigoVoucher() == null || v.getCodigoVoucher().equals("0")) {
+		    		  bandera = true;
+		    		  voucherProceso.setError(voucherProceso.getError() +'\n'+"El Archivo contiene codigo de voucher con valor 0 o null");
+			  
 		    		 }
 		      }
 		    //Creacion excel
