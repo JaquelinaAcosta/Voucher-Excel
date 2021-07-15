@@ -46,7 +46,6 @@ public class VoucherServiceImpl implements VoucherService {
 		try {
 			VoucherProceso voucherProceso = ExcelHelper.excelToVouchers(file.getInputStream());
 			List<Voucher> vouchers = voucherProceso.getVouchers();
-			List<Voucher> vouchers1 = vouchers;
 			//Controla si el codigo de voucher esta repetido en Base de Datos
 		      for(Voucher v : vouchers) {
 		    	  Voucher vAux = voucherRepository.findByCodigoVoucher(v.getCodigoVoucher());
@@ -78,7 +77,7 @@ public class VoucherServiceImpl implements VoucherService {
 			  //comprobar error
 		      if (bandera) {
 		    	  System.out.print("El voucher se encuentra en la BD, revisar Archivo a cargar");
-		    	  vouchers1.clear();
+		    	  vouchers.clear();
 		    	  excelRepository.delete(excelAdd);
 		      }  	  
 		      
@@ -86,14 +85,14 @@ public class VoucherServiceImpl implements VoucherService {
 		    	  excelRepository.delete(excelAdd);
 		      }
 		     
-			  for(Voucher v : vouchers1) {
+			  for(Voucher v : vouchers) {
 		    	  v.setExcel(excelAdd);
 		    	  v.setEmpresaEmision(empresa);
 		    	  v.setHabilitado(false);
 		      }
 			  
-		      voucherRepository.saveAll(vouchers1);
-		      List<Voucher> addVouchers = vouchers1;
+		      voucherRepository.saveAll(vouchers);
+		      List<Voucher> addVouchers = vouchers;
 		      voucherProceso.setVouchers(addVouchers);
 		      return voucherProceso;
 		} catch (IOException e) {
