@@ -9,7 +9,7 @@
         <repository>
           <id>voucher-public-repository</id>
           <name>Voucher Public Maven Repository Group</name>
-          <url>https://github.com/JaquelinaAcosta/Voucher/tree/master</url>
+          <url>https://voucherusuarios.herokuapp.com/</url>
         </repository>
       </repositories>
     </profile>
