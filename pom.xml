@@ -16,6 +16,20 @@
 	<properties>
 		<java.version>1.8</java.version>
 	</properties>
+	
+	 <profiles>
+	    <profile>
+	      <id>jboss-public</id>
+	      <repositories>
+	        <repository>
+	          <id>com.voucher</id>
+<!-- 	          <name>JBoss Public Maven Repository Group</name> -->
+	          <url>https://voucherusuarios.herokuapp.com/</url>
+	        </repository>
+	      </repositories>
+	    </profile>
+	  </profiles>
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -24,7 +38,7 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
+		</dependency>	
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -119,7 +133,6 @@
 			<artifactId>voucher</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
         </dependency>   
-
 
 		
 	</dependencies>
